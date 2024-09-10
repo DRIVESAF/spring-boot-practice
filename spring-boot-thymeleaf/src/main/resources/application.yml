@@ -1,0 +1,17 @@
+logging:
+  level:
+    root: info
+    io.drivasaf.springboot.thymeleaf: debug
+  file:
+    name: ./logs/my-log.log
+  logback:
+    rollingpolicy:
+      max-file-size: 20MB
+      max-history: 30
+  pattern:
+    console:
+
+spring:
+  thymeleaf:
+    cache: false #禁用 thymeleaf 缓存
+

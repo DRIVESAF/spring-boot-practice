@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/style.css">
+    <title>User List</title>
+</head>
+<body>
+<h1>用户列表</h1>
+
+<!-- Form for adding a new user -->
+<form action="/addUser" method="post">
+    <input type="text" name="name" placeholder="请输入用户名" required>
+    <input type="email" name="email" placeholder="请输入用户邮箱" required>
+    <button type="submit">添加用户</button>
+</form>
+
+<!-- List of users -->
+<ul>
+    <li th:each="user : ${users}">
+        <span> <span th:text="${user.id}"></span></span> -
+        <span>用户名: <span th:text="${user.name}"></span></span> -
+        <span>邮箱: <span th:text="${user.email}"></span></span>
+    </li>
+</ul>
+
+</body>
+</html>
