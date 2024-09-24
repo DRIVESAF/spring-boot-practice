@@ -1,13 +1,12 @@
 package io.drivesaf.zhihu.api.mapper;
 
-import io.drivesaf.zhihu.api.entity.Special;
+import io.drivesaf.springboot.zhihu.api.entity.Special;
+import io.drivesaf.springboot.zhihu.api.mapper.SpecialMapper;
 import jakarta.annotation.Resource;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author: DRIVESAF
