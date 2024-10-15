@@ -1,18 +1,16 @@
-package io.drivesaf.springboot.zhihu.api;
+package io.drivesaf.spirngboot.exception;
 
-import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
  * @author: DRIVESAF
- * @createTime: 2024/09/14 14:57
+ * @createTime: 2024/10/15 13:37
  * @description:
  **/
 @SpringBootApplication
-@MapperScan(basePackages = {"io.drivesaf.springboot.zhihu.api.mapper"})
 public class Application {
     public static void main(String[] args) {
-        SpringApplication.run(Application.class,args);
+        SpringApplication.run(Application.class, args);
     }
 }
