@@ -23,7 +23,7 @@ public class User {
     private String userName;  // userName 改为 username 以保持一致
     private String password;
     private String email;
-    private LocalDateTime createDate;  // 使用 LocalDateTime
+    private Integer createdAt;  // 使用 LocalDateTime
     private List<Question> questions;  // 用户提出的多个问题
     private List<Answer> answers;  // 用户给出的多个回答
 }

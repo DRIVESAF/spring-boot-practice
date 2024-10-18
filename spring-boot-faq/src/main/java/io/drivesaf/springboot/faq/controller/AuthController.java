@@ -53,4 +53,15 @@ public class AuthController {
 
         return response;
     }
+
+    /**
+     * 用户注册
+     * @param user 注册信息
+     * @return 注册结果
+     */
+    @PostMapping("/register")
+    public Map<String, String> register(@RequestBody User user) {
+        userService.registerUser(user); // 注册用户
+        return Map.of("message", "User registered successfully");
+    }
 }

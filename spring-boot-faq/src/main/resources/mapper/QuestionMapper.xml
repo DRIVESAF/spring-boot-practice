@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="io.drivesaf.springboot.faq.mapper.QuestionMapper">
+
+    <resultMap id="QuestionResultMap" type="io.drivesaf.springboot.faq.entity.Question">
+        <id column="question_id" property="questionId"/>
+        <result column="content" property="content"/>
+        <result column="created_at" property="createdAt"/>
+        <association property="user" javaType="io.drivesaf.springboot.faq.entity.User">
+            <id column="user_id" property="userId"/>
+            <result column="userName" property="userName"/>
+        </association>
+    </resultMap>
+
+    <resultMap id="QuestionDetailResultMap" type="io.drivesaf.springboot.faq.entity.Question">
+        <id column="question_id" property="questionId"/>
+        <result column="content" property="content"/>
+        <result column="created_at" property="createdAt"/>
+        <association property="user" javaType="io.drivesaf.springboot.faq.entity.User">
+            <id column="user_id" property="userId"/>
+            <result column="userName" property="userName"/>
+        </association>
+        <collection property="answers" ofType="io.drivesaf.springboot.faq.entity.Answer">
+            <id column="answer_id" property="answerId"/>
+            <result column="answerContent" property="content"/>
+            <result column="answerCreatedAt" property="createdAt"/>
+        </collection>
+    </resultMap>
+
+    <insert id="insertQuestion" parameterType="io.drivesaf.springboot.faq.entity.Question">
+        INSERT INTO t_question (content, created_at, user_id)
+        VALUES (#{content}, #{createdAt}, #{user.userId})
+    </insert>
+
+    <select id="selectAllQuestions" resultMap="QuestionResultMap">
+        SELECT q.question_id, q.content, q.created_at, u.user_id, u.username AS userName
+        FROM t_question q
+                 JOIN t_user u ON q.user_id = u.user_id
+    </select>
+
+    <!-- 查询特定问题的详细信息 -->
+    <select id="selectQuestionDetail" parameterType="int" resultMap="QuestionDetailResultMap">
+        SELECT q.question_id, q.content, q.created_at, u.user_id, u.username AS userName,
+               a.answer_id, a.content AS answerContent, a.created_at AS answerCreatedAt, au.user_id AS answerUserId, au.username AS answerUserName
+        FROM t_question q
+                 JOIN t_user u ON q.user_id = u.user_id
+                 LEFT JOIN t_answer a ON q.question_id = a.question_id
+                 LEFT JOIN t_user au ON a.user_id = au.user_id
+        WHERE q.question_id = #{questionId}
+    </select>
+
+    <!-- 模糊查询问题内容 -->
+    <select id="selectQuestionsByContent" parameterType="String" resultMap="QuestionResultMap">
+        SELECT q.question_id, q.content, q.created_at, u.user_id, u.username AS userName
+        FROM t_question q
+                 JOIN t_user u ON q.user_id = u.user_id
+        WHERE q.content LIKE CONCAT('%', #{content}, '%')
+    </select>
+
+
+</mapper>

@@ -21,6 +21,7 @@ import java.util.List;
 public class Question {
     private Integer questionId;  //
     private String content;
-    private LocalDateTime createDate;  // 使用 LocalDateTime 代替 LocalDate
+    private Integer createdAt; // 将类型改为 Integer 用于存储时间戳
     private User user;  // 提问者
+    private List<Answer> answers; // 问题的所有回答
 }

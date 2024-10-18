@@ -19,9 +19,9 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class Answer {
-    private Integer answerId;
-    private String content;
-    private LocalDateTime createDate;  // 使用 LocalDateTime 代替 LocalDate
-    private User user;  // 回答者
-    private Question question;  // 对应一个问题
+    private Integer answerId;      // 回答ID
+    private String content;        // 回答内容
+    private Integer createdAt;     // 创建时间（时间戳）
+    private User user;             // 回答者
+    private Question question;      // 回答的问题
 }
