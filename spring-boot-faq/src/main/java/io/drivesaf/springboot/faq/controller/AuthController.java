@@ -1,12 +1,10 @@
 package io.drivesaf.springboot.faq.controller;
 
+import io.drivesaf.springboot.faq.common.ResponseResult;
 import io.drivesaf.springboot.faq.entity.User;
 import io.drivesaf.springboot.faq.service.UserService;
 import io.drivesaf.springboot.faq.utils.JwtUtil;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -33,7 +31,7 @@ public class AuthController {
      * @return 返回生成的JWT token
      */
     @PostMapping("/login")
-    public Map<String, Object> login(@RequestBody Map<String, String> loginData) {
+    public ResponseResult login(@RequestBody Map<String, String> loginData) {
         String userName = loginData.get("userName");
         String password = loginData.get("password");
 
@@ -47,21 +45,34 @@ public class AuthController {
             claims.put("userId", user.getUserId());
             String token = jwtUtil.generateToken(claims);
             response.put("token", token);
+            return ResponseResult.builder()
+                    .code(200)
+                    .msg("登录成功")
+                    .data(response)
+                    .build();
         } else {
-            response.put("error", "Invalid username or password");
+            return ResponseResult.builder()
+                    .code(401)
+                    .msg("无效用户名或密码")
+                    .build();
         }
-
-        return response;
     }
 
-    /**
-     * 用户注册
-     * @param user 注册信息
-     * @return 注册结果
-     */
     @PostMapping("/register")
-    public Map<String, String> register(@RequestBody User user) {
+    public ResponseResult register(@RequestBody User user) {
+        // 检查用户是否已存在
+        User existingUser = userService.findByUserName(user.getUserName());
+        if (existingUser != null) {
+            return ResponseResult.builder()
+                    .code(400)
+                    .msg("用户已存在")
+                    .build();
+        }
+
         userService.registerUser(user); // 注册用户
-        return Map.of("message", "User registered successfully");
+        return ResponseResult.builder()
+                .code(200)
+                .msg("用户注册成功")
+                .build();
     }
 }

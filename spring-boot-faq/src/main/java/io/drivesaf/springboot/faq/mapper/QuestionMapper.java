@@ -3,6 +3,7 @@ package io.drivesaf.springboot.faq.mapper;
 import io.drivesaf.springboot.faq.entity.Question;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
@@ -22,4 +23,10 @@ public interface QuestionMapper {
 
     // 模糊查询问题内容
     List<Question> selectQuestionsByContent(String content); // 添加模糊查询方法
+
+    void deleteQuestion(Integer questionId); // 删除问题
+
+    void updateQuestion(@Param("questionId") Integer questionId, @Param("content") String content); // 修改问题
+
+
 }

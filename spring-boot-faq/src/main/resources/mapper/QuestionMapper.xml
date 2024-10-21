@@ -9,8 +9,15 @@
         <association property="user" javaType="io.drivesaf.springboot.faq.entity.User">
             <id column="user_id" property="userId"/>
             <result column="userName" property="userName"/>
+            <result column="password" property="password"/>
+            <result column="email" property="email"/>
+            <result column="userCreatedAt" property="createdAt"/>
+            <collection property="questions" ofType="Question"/>
+            <collection property="answers" ofType="Answer"/>
         </association>
     </resultMap>
+
+
 
     <resultMap id="QuestionDetailResultMap" type="io.drivesaf.springboot.faq.entity.Question">
         <id column="question_id" property="questionId"/>
@@ -19,12 +26,25 @@
         <association property="user" javaType="io.drivesaf.springboot.faq.entity.User">
             <id column="user_id" property="userId"/>
             <result column="userName" property="userName"/>
+            <result column="password" property="password"/>
+            <result column="email" property="email"/>
+            <result column="userCreatedAt" property="createdAt"/> <!-- 映射 createdAt -->
+            <collection property="questions" ofType="Question"/> <!-- 如果需要填充 -->
+            <collection property="answers" ofType="Answer"/> <!-- 如果需要填充 -->
         </association>
         <collection property="answers" ofType="io.drivesaf.springboot.faq.entity.Answer">
             <id column="answer_id" property="answerId"/>
             <result column="answerContent" property="content"/>
             <result column="answerCreatedAt" property="createdAt"/>
+            <association property="user" javaType="io.drivesaf.springboot.faq.entity.User">
+                <id column="answerUserId" property="userId"/>
+                <result column="answerUserName" property="userName"/>
+                <result column="password" property="password"/>
+                <result column="email" property="email"/>
+                <result column="userCreatedAt" property="createdAt"/>
+            </association>
         </collection>
+
     </resultMap>
 
     <insert id="insertQuestion" parameterType="io.drivesaf.springboot.faq.entity.Question">
@@ -33,15 +53,30 @@
     </insert>
 
     <select id="selectAllQuestions" resultMap="QuestionResultMap">
-        SELECT q.question_id, q.content, q.created_at, u.user_id, u.username AS userName
+        SELECT q.question_id, q.content, q.created_at,
+               u.user_id, u.username AS userName,
+               u.password, u.email, u.created_at AS userCreatedAt
         FROM t_question q
                  JOIN t_user u ON q.user_id = u.user_id
     </select>
 
+
+
     <!-- 查询特定问题的详细信息 -->
     <select id="selectQuestionDetail" parameterType="int" resultMap="QuestionDetailResultMap">
-        SELECT q.question_id, q.content, q.created_at, u.user_id, u.username AS userName,
-               a.answer_id, a.content AS answerContent, a.created_at AS answerCreatedAt, au.user_id AS answerUserId, au.username AS answerUserName
+        SELECT q.question_id,
+               q.content,
+               q.created_at,
+               u.user_id,
+               u.username   AS userName,
+               a.answer_id,
+               a.content    AS answerContent,
+               a.created_at AS answerCreatedAt,
+               au.user_id   AS answerUserId,
+               au.username  AS answerUserName,
+               au.password,
+               au.email
+
         FROM t_question q
                  JOIN t_user u ON q.user_id = u.user_id
                  LEFT JOIN t_answer a ON q.question_id = a.question_id
@@ -57,5 +92,14 @@
         WHERE q.content LIKE CONCAT('%', #{content}, '%')
     </select>
 
+    <delete id="deleteQuestion" parameterType="int">
+        DELETE FROM t_question WHERE question_id = #{questionId}
+    </delete>
+
+    <update id="updateQuestion" parameterType="map">
+        UPDATE t_question
+        SET content = #{content}
+        WHERE question_id = #{questionId}
+    </update>
 
 </mapper>

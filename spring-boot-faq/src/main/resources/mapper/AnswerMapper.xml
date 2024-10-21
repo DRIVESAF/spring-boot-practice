@@ -4,8 +4,44 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="io.drivesaf.springboot.faq.mapper.AnswerMapper">
+
+    <resultMap id="AnswerResultMap" type="io.drivesaf.springboot.faq.entity.Answer">
+        <id property="answerId" column="answer_id"/>
+        <result property="content" column="content"/>
+        <result property="createdAt" column="created_at"/>
+        <association property="user" javaType="io.drivesaf.springboot.faq.entity.User">
+            <id property="userId" column="user_id"/>
+            <result property="userName" column="userName"/>
+        </association>
+    </resultMap>
+
+    <select id="findById" parameterType="int" resultMap="AnswerResultMap">
+        SELECT a.answer_id, a.content, a.created_at,
+               u.user_id, u.username AS userName
+        FROM t_answer a
+                 LEFT JOIN t_user u ON a.user_id = u.user_id
+        WHERE a.answer_id = #{answerId}
+    </select>
+
     <insert id="insertAnswer" parameterType="io.drivesaf.springboot.faq.entity.Answer">
         INSERT INTO t_answer (content, created_at, user_id, question_id)
         VALUES (#{content}, #{createdAt}, #{user.userId}, #{question.questionId})
     </insert>
+
+    <delete id="deleteAnswer" parameterType="int">
+        DELETE FROM t_answer WHERE answer_id = #{answerId}
+    </delete>
+
+    <update id="updateAnswer" parameterType="map">
+        UPDATE t_answer
+        SET content = #{content}
+        WHERE answer_id = #{answerId}
+    </update>
+
+    <delete id="deleteAnswersByQuestionId" parameterType="int">
+        DELETE FROM t_answer WHERE question_id = #{questionId}
+    </delete>
+
+
+
 </mapper>
