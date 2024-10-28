@@ -35,28 +35,67 @@ public class AnswerController {
     public ResponseResult createAnswer(
             @RequestHeader("Authorization") String token,
             @RequestBody Map<String, String> answerData) {
+        try {
+            // 验证 JWT token
+            if (!jwtUtil.validateToken(token)) {
+                return ResponseResult.builder()
+                        .code(401)
+                        .msg("用户未登录")
+                        .build();
+            }
 
-        // 验证 JWT token
-        if (!jwtUtil.validateToken(token)) {
+            // 从 token 中提取用户信息
+            Integer userId = (Integer) jwtUtil.getClaims(token).get("userId");
+
+            // 获取问题 ID
+            String questionIdStr = answerData.get("questionId");
+            String content = answerData.get("content");
+
+            // 检查内容是否有效
+            if (questionIdStr == null || content == null || content.trim().isEmpty()) {
+                return ResponseResult.builder()
+                        .code(400)
+                        .msg("内容和问题ID不能为空")
+                        .build();
+            }
+
+            // 解析问题 ID
+            Integer questionId;
+            try {
+                questionId = Integer.parseInt(questionIdStr);
+            } catch (NumberFormatException e) {
+                return ResponseResult.builder()
+                        .code(400)
+                        .msg("无效的问题ID")
+                        .build();
+            }
+
+            // 检查内容的长度
+            if (content.length() > 500) { // 假设回答内容最大长度为 500 字符
+                return ResponseResult.builder()
+                        .code(400)
+                        .msg("内容长度不能超过500个字符")
+                        .build();
+            }
+
+            // 创建回答
+            answerService.createAnswer(content, questionId, userId);
+
             return ResponseResult.builder()
-                    .code(401)
-                    .msg("用户未登录")
+                    .code(200)
+                    .msg("回答成功")
+                    .build();
+        } catch (Exception e) {
+            // 捕获其他异常并记录日志
+            e.printStackTrace(); // 或使用日志记录工具
+            return ResponseResult.builder()
+                    .code(500)
+                    .msg("服务器内部错误")
                     .build();
         }
-
-        // 从 token 中提取用户信息
-        Integer userId = (Integer) jwtUtil.getClaims(token).get("userId");
-        Integer questionId = Integer.parseInt(answerData.get("questionId"));
-        String content = answerData.get("content");
-
-        // 创建回答
-        answerService.createAnswer(content, questionId, userId);
-
-        return ResponseResult.builder()
-                .code(200)
-                .msg("回答成功")
-                .build();
     }
+
+
 
     /**
      * 删除回答

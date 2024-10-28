@@ -1,5 +1,6 @@
 package io.drivesaf.springboot.faq.controller;
 
+import cn.hutool.json.JSONException;
 import io.drivesaf.springboot.faq.common.ResponseResult;
 import io.drivesaf.springboot.faq.entity.Question;
 import io.drivesaf.springboot.faq.service.QuestionService;
@@ -30,29 +31,61 @@ public class QuestionController {
     public ResponseResult askQuestion(
             @RequestHeader("Authorization") String token,
             @RequestBody Map<String, String> questionData) {
+        try {
+            // 验证 JWT token
+            if (!jwtUtil.validateToken(token)) {
+                return ResponseResult.builder()
+                        .code(401)
+                        .msg("用户未登录")
+                        .build();
+            }
 
-        // 验证 JWT token
-        if (!jwtUtil.validateToken(token)) {
+            // 从 token 中提取用户信息
+            Integer userId = (Integer) jwtUtil.getClaims(token).get("userId");
+
+            // 获取问题内容
+            String content = questionData.get("content");
+            if (content == null || content.isEmpty()) {
+                return ResponseResult.builder()
+                        .code(400)
+                        .msg("内容不能为空")
+                        .build();
+            }
+
+            // 其他参数检查（如有必要）
+            // 检查问题内容的长度
+            if (content.length() > 500) { // 假设问题内容最大长度为 500 字符
+                return ResponseResult.builder()
+                        .code(400)
+                        .msg("内容长度不能超过500个字符")
+                        .build();
+            }
+
+            // 保存问题
+            questionService.createQuestion(content, userId);
+
             return ResponseResult.builder()
-                    .code(401)
-                    .msg("用户未登录")
+                    .code(200)
+                    .msg("提问发送成功")
+                    .build();
+        } catch (JSONException e) {
+            // 处理 JSON 解析异常
+            return ResponseResult.builder()
+                    .code(400)
+                    .msg("无效的请求数据格式")
+                    .build();
+        } catch (Exception e) {
+            // 捕获其他异常并记录日志
+            e.printStackTrace(); // 或使用日志记录工具
+            return ResponseResult.builder()
+                    .code(500)
+                    .msg("服务器内部错误")
                     .build();
         }
-
-        // 从 token 中提取用户信息
-        Integer userId = (Integer) jwtUtil.getClaims(token).get("userId");
-
-        // 获取问题内容
-        String content = questionData.get("content");
-
-        // 保存问题
-        questionService.createQuestion(content, userId);
-
-        return ResponseResult.builder()
-                .code(200)
-                .msg("提问发送成功")
-                .build();
     }
+
+
+
 
     // 用户查询所有问题
     @GetMapping("/all")

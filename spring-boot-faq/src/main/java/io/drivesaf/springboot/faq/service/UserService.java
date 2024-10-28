@@ -15,4 +15,5 @@ import java.util.Map;
 public interface UserService {
     void registerUser(User user);
     User findByUserName(String userName);
+    User getUserByUsername(String username);
 }

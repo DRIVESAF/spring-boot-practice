@@ -10,7 +10,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @description:
  **/
 
-// @MapperScan(basePackages = {"io.drivesaf.springboot.faq.mapper"})
+@MapperScan(basePackages = {"io.drivesaf.springboot.faq.mapper"})
 @SpringBootApplication
 public class Application {
     public static void main(String[] args) {

@@ -13,4 +13,7 @@ import org.apache.ibatis.annotations.Select;
 public interface UserMapper {
     User findByUserName(String userName);
     void insertUser(User user);
+
+    @Select("SELECT * FROM users WHERE username = #{username}")
+    User findByUsername(String username);
 }

@@ -3,6 +3,7 @@ package io.drivesaf.springboot.faq.service.impl;
 import io.drivesaf.springboot.faq.entity.User;
 import io.drivesaf.springboot.faq.mapper.UserMapper;
 import io.drivesaf.springboot.faq.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -15,7 +16,8 @@ import java.time.Instant;
 @Service
 public class UserServiceImpl implements UserService {
 
-    private final UserMapper userMapper;
+    @Autowired
+    private UserMapper userMapper;
 
     public UserServiceImpl(UserMapper userMapper) {
         this.userMapper = userMapper;
@@ -31,5 +33,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public User findByUserName(String userName) {
         return userMapper.findByUserName(userName);
+    }
+
+    @Override
+    public User getUserByUsername(String username) {
+        return userMapper.findByUsername(username);
     }
 }
