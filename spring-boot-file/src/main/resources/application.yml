@@ -1,0 +1,17 @@
+file:
+  upload-path: D:\Users\DRIVESAFE\Desktop\upload
+
+spring:
+  web:
+    resources:
+      static-locations: classpath:/static/,file:${file.upload-path}
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB # 单个文件上传大小
+      max-request-size: 100MB # 一次请求上传文件大小
+
+minio:
+  endPoint: http://43.137.12.232:9000
+  accessKey: admin
+  secretKey: admin123
